@@ -8,11 +8,11 @@
 
   <style>
     /* Page layout */
-    .demo-shell { padding:110px 2rem 60px; max-width:1400px; margin:0 auto; }
+    .demo-shell { padding:110px 2rem 60px; max-width:1750px; margin:0 auto; }
     .demo-grid  { display:grid; grid-template-columns:420px 1fr; gap:2rem; align-items:start; }
-    @media (max-width:1024px){ .demo-grid{ grid-template-columns:1fr } }
+    @media (max-width:1280px){ .demo-grid{ grid-template-columns:1fr } }
 
-    /* Shared card frame (matches your previous style) */
+    /* Shared card frame */
     .demo-card{
       background:var(--card-bg);
       border:1px solid var(--border-color);
@@ -44,20 +44,20 @@
     .streamer-bio{ color:var(--text-secondary); line-height:1.8; }
     .tag{ display:inline-block; border:1px solid rgba(0,255,255,.25); padding:.25rem .6rem; margin:.25rem; border-radius:999px; font-size:.85rem; color:var(--primary-cyan); }
 
-    /* Right: viz frame */
+    /* Right: viz area — fixed 1200x700 inside frame */
+    .viz-card .viz-shell{ display:flex; justify-content:center; }
     .viz-card .viz-frame{
-      position:relative; /* keeps the chrome frame */
-      padding-top:56.25%; /* 16:9 aspect */
+      width:1200px; height:700px;
+      position:relative;
       background:rgba(0,0,0,.25);
       border:1px solid var(--border-color);
       clip-path:polygon(24px 0,100% 0,100% calc(100% - 24px),calc(100% - 24px) 100%,0 100%,0 24px);
     }
-    /* Make embedded viz fill the frame perfectly */
-    .viz-card .viz-frame > .viz-abs{ position:absolute; inset:0; }
-    tableau-viz, .viz-abs iframe{ width:100%; height:100%; border:0; display:block; }
+    .viz-card .viz-abs{ position:absolute; inset:0; }
+    tableau-viz, .viz-card iframe{ width:100%; height:100%; border:0; display:block; }
   </style>
 
-  <!-- Tableau Embedding API (for <tableau-viz>) -->
+  <!-- Tableau Embedding API for <tableau-viz> -->
   <script type="module" src="https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
 </head>
 
@@ -69,7 +69,7 @@
   <div class="grid-overlay"><div class="grid-lines"></div><div class="grid-glow"></div></div>
   <div class="scanlines"></div><div class="noise-overlay"></div>
 
-  <!-- Top nav -->
+  <!-- Navigation -->
   <nav>
     <div class="nav-container">
       <a href="index.html" class="logo">Twitchlytics</a>
@@ -79,27 +79,28 @@
         <li><a href="index.html#tableau">Dashboard</a></li>
         <li><a href="demo.html">Demo</a></li>
       </ul>
-      <div class="nav-bottom"><a href="index.html#contact" class="cyber-button">Request Demo</a></div>
+      <div class="nav-bottom"><a href="index.html#contact" class="cyber-button">Create account</a></div>
       <button class="mobile-menu-button" id="mobileMenuBtn"><div class="hamburger"><span></span><span></span><span></span></div></button>
     </div>
   </nav>
 
-  <!-- Main -->
+  <!-- Demo Content -->
   <div class="demo-shell">
     <div class="demo-grid">
-      <!-- Left: Streamer Info -->
-      <aside class="demo-card">
+      <!-- Left: Streamer Info Card -->
+      <aside class="demo-card" id="streamerCard">
         <div class="streamer-header">
           <div class="streamer-avatar">
-            <img alt="Caseoh avatar" src="https://static-cdn.jtvnw.net/jtv_user_pictures/x.png" />
+            <!-- Using your uploaded image in repo root -->
+            <img id="avatar" alt="Caseoh avatar" src="case.jpeg"/>
           </div>
           <div>
-            <div class="streamer-name">Caseoh_</div>
-            <div class="streamer-handle">twitch.tv/Caseoh_</div>
+            <div class="streamer-name" id="name">Caseoh_</div>
+            <div class="streamer-handle" id="handle">twitch.tv/Caseoh_</div>
           </div>
         </div>
         <div class="demo-divider"></div>
-        <p class="streamer-bio">
+        <p class="streamer-bio" id="bio">
           The dude from TikTok — caseoh@mythictalent.com. Official waiting room channel “CASEOH247”.
         </p>
         <div id="tags" style="margin-top:.5rem">
@@ -109,18 +110,19 @@
         </div>
       </aside>
 
-      <!-- Right: Viz Card (same frame as before, no tip line) -->
+      <!-- Right: Viz Card -->
       <section class="demo-card viz-card">
         <h2>Caseoh_ Analytics</h2>
-        <div class="viz-frame">
-          <div class="viz-abs">
-            <!-- Your embed fills the frame -->
-            <tableau-viz
-              id="tableau-viz"
-              src="https://10ay.online.tableau.com/t/kianasaki-302bd2f88e/views/Caseohdashboardfinal/Dashboard1"
-              hide-tabs
-              toolbar="bottom">
-            </tableau-viz>
+        <div class="viz-shell">
+          <div class="viz-frame">
+            <div class="viz-abs">
+              <tableau-viz
+                id="tableau-viz"
+                src="https://10ay.online.tableau.com/t/kianasaki-302bd2f88e/views/Caseohdashboardfinal/Dashboard1"
+                hide-tabs
+                toolbar="bottom">
+              </tableau-viz>
+            </div>
           </div>
         </div>
       </section>
