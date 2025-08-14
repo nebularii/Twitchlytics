@@ -33,6 +33,21 @@
         <li><a href="#insights">Insights</a></li>
         <li><a href="#tableau">Dashboard</a></li>
         <li><a href="demo.html">Demo</a></li>
+
+        <!-- NEW: Caseoh-only search (to jump to demo) -->
+        <li class="nav-search-li" style="position:relative;margin-left:.25rem;">
+          <form onsubmit="return homeSearch(event)" style="display:flex;gap:.35rem;align-items:center;">
+            <input id="homeSearchInput" type="search" placeholder="Search username…"
+                   style="width:200px;max-width:40vw;padding:.45rem .7rem;border:1px solid var(--border-color);
+                          background:rgba(0,255,255,.05);color:var(--text-primary);border-radius:6px;outline:none;">
+            <button type="submit" class="nav-search-btn"
+                    style="padding:.42rem .7rem;border:1px solid rgba(0,255,255,.35);background:transparent;color:var(--primary-cyan);
+                           font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.3px;">
+              Go
+            </button>
+          </form>
+        </li>
+
         <li><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav-bottom">
@@ -184,7 +199,7 @@
     </div>
   </section>
 
-  <!-- Tableau Embed -->
+  <!-- Live Dashboard -->
   <section class="features fade-up" id="tableau" aria-label="Interactive Dashboard">
     <div class="features-container">
       <div class="section-header">
@@ -192,11 +207,13 @@
         <p class="section-subtitle">Explore categories, filter by signals, and compare streamers side-by-side.</p>
       </div>
 
-      <!-- CHANGED: fixed 1200x700 container and Caseoh embed -->
+      <!-- Fixed 1200x700 container with Caseoh embed -->
       <div style="max-width:1200px;margin:0 auto;">
         <div style="display:flex;justify-content:center;">
           <div style="width:1200px;height:700px;border:1px solid rgba(229,231,235,0.2);background:rgba(0,0,0,0.2);">
+            <!-- Tableau Embedding API -->
             <script type="module" src="https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+            <!-- Caseoh_ dashboard -->
             <tableau-viz
               id="caseoh-home-viz"
               src="https://10ay.online.tableau.com/t/kianasaki-302bd2f88e/views/Caseohdashboardfinal/Dashboard1"
@@ -207,7 +224,7 @@
           </div>
         </div>
       </div>
-      <!-- /CHANGED -->
+      <!-- /embed -->
     </div>
   </section>
 
@@ -253,6 +270,20 @@
       </div>
     </div>
   </footer>
+
+  <!-- Caseoh-only search handler -->
+  <script>
+    function homeSearch(e){
+      e.preventDefault();
+      const q = (document.getElementById('homeSearchInput').value || '').trim().toLowerCase();
+      if (q === 'caseoh' || q === 'caseoh_') {
+        window.location.href = 'demo.html';
+      } else {
+        alert('For this example search, type: caseoh');
+      }
+      return false;
+    }
+  </script>
 
   <script src="templatemo-nexus-scripts.js"></script>
 </body>
