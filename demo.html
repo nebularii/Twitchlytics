@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twitchlytics — Streamer Demo</title>
+  <link href="templatemo-nexus-style.css" rel="stylesheet" />
+  <style>
+    /* Page-specific layout */
+    .demo-shell { padding:110px 2rem 60px; max-width:1400px; margin:0 auto; }
+    .demo-grid { display:grid; grid-template-columns:420px 1fr; gap:2rem; align-items:start; }
+    @media(max-width:1024px){ .demo-grid{ grid-template-columns:1fr } }
+
+    /* Card borders inspired by screenshot */
+    .demo-card {
+      background:var(--card-bg);
+      border:1px solid var(--border-color);
+      backdrop-filter:blur(10px);
+      position:relative;
+      padding:2rem;
+      clip-path:polygon(24px 0,100% 0,100% calc(100% - 24px),calc(100% - 24px) 100%,0 100%,0 24px);
+    }
+    .demo-card::after {
+      content:""; position:absolute; inset:0;
+      border:1px solid rgba(0,255,255,.12); pointer-events:none;
+      clip-path:inherit;
+    }
+    .demo-card h2 { color:var(--primary-cyan); text-transform:uppercase; letter-spacing:1px; margin:0 0 1rem; }
+    .demo-divider { height:1px; background:rgba(0,255,255,.12); margin:1rem 0 1.25rem; }
+
+    .streamer-header { display:flex; gap:1rem; align-items:center; }
+    .streamer-avatar {
+      width:72px; height:72px; border-radius:14px;
+      background:linear-gradient(135deg,var(--primary-cyan),var(--primary-purple));
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 0 25px rgba(0,255,255,.25);
+    }
+    .streamer-avatar img {
+      width:64px; height:64px; border-radius:12px;
+      border:2px solid rgba(229,231,235,.15); display:block;
+    }
+    .streamer-name { font-size:1.4rem; font-weight:800; }
+    .streamer-handle { color:var(--text-secondary); font-size:.95rem; }
+    .streamer-bio { color:var(--text-secondary); line-height:1.8; }
+    .tag {
+      display:inline-block;
+      border:1px solid rgba(0,255,255,.25);
+      padding:.25rem .6rem; margin:.25rem;
+      border-radius:999px;
+      font-size:.85rem; color:var(--primary-cyan);
+    }
+
+    /* Chart frame echoing first screenshot */
+    .viz-frame { position:relative; min-height:520px; }
+    .viz-inner {
+      position:relative; padding-top:56.25%;
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--border-color);
+      clip-path:polygon(24px 0,100% 0,100% calc(100% - 24px),calc(100% - 24px) 100%,0 100%,0 24px);
+    }
+    .viz-inner iframe {
+      position:absolute; inset:0; width:100%; height:100%; border:0;
+    }
+
+    /* Mini list of sheets to swap charts quickly */
+    .sheet-switch { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1rem; }
+    .sheet-btn {
+      background:transparent; color:var(--primary-cyan);
+      border:1px solid rgba(0,255,255,.35);
+      padding:.5rem .9rem; text-transform:uppercase;
+      letter-spacing:.5px; font-weight:700; cursor:pointer;
+    }
+    .sheet-btn:hover { background:rgba(0,255,255,.06); }
+  </style>
+</head>
+<body>
+  <!-- Background -->
+  <div class="cyber-bg"><div class="cyber-gradient"></div><div class="matrix-rain" id="matrixRain"></div></div>
+  <div class="particles" id="particlesContainer"></div>
+  <div class="data-streams" id="dataStreams"></div>
+  <div class="grid-overlay"><div class="grid-lines"></div><div class="grid-glow"></div></div>
+  <div class="scanlines"></div><div class="noise-overlay"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="index.html" class="logo">Twitchlytics</a>
+      <ul class="nav-links">
+        <li><a href="index.html#features">Product</a></li>
+        <li><a href="index.html#insights">Methodology</a></li>
+        <li><a href="index.html#tableau">Dashboard</a></li>
+        <li><a href="demo.html">Demo</a></li>
+      </ul>
+      <div class="nav-bottom"><a href="index.html#contact" class="cyber-button">Request Demo</a></div>
+      <button class="mobile-menu-button" id="mobileMenuBtn"><div class="hamburger"><span></span><span></span><span></span></div></button>
+    </div>
+  </nav>
+
+  <!-- Demo Content -->
+  <div class="demo-shell">
+    <div class="demo-grid">
+      <!-- Left: Streamer Info Card -->
+      <aside class="demo-card" id="streamerCard">
+        <div class="streamer-header">
+          <div class="streamer-avatar"><img id="avatar" alt="Streamer avatar" src="https://static-cdn.jtvnw.net/jtv_user_pictures/x.png"/></div>
+          <div>
+            <div class="streamer-name" id="name">StreamerName</div>
+            <div class="streamer-handle" id="handle">twitch.tv/StreamerName</div>
+          </div>
+        </div>
+        <div class="demo-divider"></div>
+        <p class="streamer-bio" id="bio">Short description of the streamer, content style, primary categories, schedule consistency, and sponsorship highlights.</p>
+        <div id="tags" style="margin-top:.5rem">
+          <span class="tag">Shooter</span><span class="tag">Esports</span><span class="tag">PG-13</span>
+        </div>
+      </aside>
+
+      <!-- Right: Tableau Embed -->
+      <section class="demo-card">
+        <h2>Embedded Tableau</h2>
+        <div class="viz-frame">
+          <div class="viz-inner">
+            <iframe id="tableauFrame" title="Twitchlytics Sheet" src="" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="sheet-switch" id="sheetSwitch"></div>
+        <p class="section-subtitle" style="margin-top:1rem">
+          Tip: To embed a specific chart (worksheet), use:
+          <code>/views/<strong>Workbook</strong>/<strong>SheetName</strong>?:showVizHome=no&:embed=y&:toolbar=no</code>
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer"><div class="footer-content"><div class="footer-bottom"><p>&copy; 2025 Twitchlytics.</p></div></div></footer>
+
+  <script>
+    const frame = document.getElementById('tableauFrame');
+    const switcher = document.getElementById('sheetSwitch');
+
+    // Configure default sheet and alternates
+    const SHEETS = [
+      {label:'Overview', url:''},
+      {label:'Engagement Trend', url:''},
+      {label:'Category Mix', url:''}
+    ];
+
+    function setSheet(url){ if(url) frame.src = url; }
+
+    // Render sheet buttons
+    SHEETS.filter(s=>s.url).forEach((s,i)=>{
+      const b=document.createElement('button');
+      b.className='sheet-btn'; b.textContent=s.label;
+      b.onclick=()=>setSheet(s.url);
+      switcher.appendChild(b);
+      if(i===0) setSheet(s.url);
+    });
+
+    // Populate streamer details from query params
+    const q=new URLSearchParams(location.search);
+    if(q.get('name')) document.getElementById('name').textContent=q.get('name');
+    if(q.get('handle')) document.getElementById('handle').textContent=q.get('handle');
+    if(q.get('bio')) document.getElementById('bio').textContent=q.get('bio');
+    if(q.get('avatar')) document.getElementById('avatar').src=q.get('avatar');
+  </script>
+  <script src="templatemo-nexus-scripts.js"></script>
+</body>
+</html>
