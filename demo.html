@@ -5,16 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Twitchlytics — Caseoh_ Analytics</title>
   <link href="templatemo-nexus-style.css" rel="stylesheet" />
+
+  <style>
+    /* Page layout */
+    .demo-shell { padding:110px 2rem 60px; max-width:1400px; margin:0 auto; }
+    .demo-grid  { display:grid; grid-template-columns:420px 1fr; gap:2rem; align-items:start; }
+    @media (max-width:1024px){ .demo-grid{ grid-template-columns:1fr } }
+
+    /* Shared card frame (matches your previous style) */
+    .demo-card{
+      background:var(--card-bg);
+      border:1px solid var(--border-color);
+      backdrop-filter:blur(10px);
+      position:relative; padding:2rem;
+      clip-path:polygon(24px 0,100% 0,100% calc(100% - 24px),calc(100% - 24px) 100%,0 100%,0 24px);
+    }
+    .demo-card::after{
+      content:""; position:absolute; inset:0; pointer-events:none;
+      border:1px solid rgba(0,255,255,.12); clip-path:inherit;
+    }
+    .demo-card h2{ color:var(--primary-cyan); text-transform:uppercase; letter-spacing:1px; margin:0 0 1rem; }
+    .demo-divider{ height:1px; background:rgba(0,255,255,.12); margin:1rem 0 1.25rem; }
+
+    /* Left: streamer info */
+    .streamer-header{ display:flex; gap:1rem; align-items:center; }
+    .streamer-avatar{
+      width:72px; height:72px; border-radius:14px;
+      background:linear-gradient(135deg,var(--primary-cyan),var(--primary-purple));
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 0 25px rgba(0,255,255,.25);
+    }
+    .streamer-avatar img{
+      width:64px; height:64px; border-radius:12px; object-fit:cover;
+      border:2px solid rgba(229,231,235,.15);
+    }
+    .streamer-name{ font-size:1.4rem; font-weight:800; }
+    .streamer-handle{ color:var(--text-secondary); font-size:.95rem; }
+    .streamer-bio{ color:var(--text-secondary); line-height:1.8; }
+    .tag{ display:inline-block; border:1px solid rgba(0,255,255,.25); padding:.25rem .6rem; margin:.25rem; border-radius:999px; font-size:.85rem; color:var(--primary-cyan); }
+
+    /* Right: viz frame */
+    .viz-card .viz-frame{
+      position:relative; /* keeps the chrome frame */
+      padding-top:56.25%; /* 16:9 aspect */
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--border-color);
+      clip-path:polygon(24px 0,100% 0,100% calc(100% - 24px),calc(100% - 24px) 100%,0 100%,0 24px);
+    }
+    /* Make embedded viz fill the frame perfectly */
+    .viz-card .viz-frame > .viz-abs{ position:absolute; inset:0; }
+    tableau-viz, .viz-abs iframe{ width:100%; height:100%; border:0; display:block; }
+  </style>
+
+  <!-- Tableau Embedding API (for <tableau-viz>) -->
+  <script type="module" src="https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js"></script>
 </head>
+
 <body>
-  <!-- Background -->
+  <!-- Background layers -->
   <div class="cyber-bg"><div class="cyber-gradient"></div><div class="matrix-rain" id="matrixRain"></div></div>
   <div class="particles" id="particlesContainer"></div>
   <div class="data-streams" id="dataStreams"></div>
   <div class="grid-overlay"><div class="grid-lines"></div><div class="grid-glow"></div></div>
   <div class="scanlines"></div><div class="noise-overlay"></div>
 
-  <!-- Navigation -->
+  <!-- Top nav -->
   <nav>
     <div class="nav-container">
       <a href="index.html" class="logo">Twitchlytics</a>
@@ -29,21 +84,23 @@
     </div>
   </nav>
 
-  <!-- Demo Content -->
+  <!-- Main -->
   <div class="demo-shell">
     <div class="demo-grid">
-      <!-- Left: Streamer Info Card -->
-      <aside class="demo-card" id="streamerCard">
+      <!-- Left: Streamer Info -->
+      <aside class="demo-card">
         <div class="streamer-header">
-          <div class="streamer-avatar"><img id="avatar" alt="Streamer avatar" src="https://static-cdn.jtvnw.net/jtv_user_pictures/x.png"/></div>
+          <div class="streamer-avatar">
+            <img alt="Caseoh avatar" src="https://static-cdn.jtvnw.net/jtv_user_pictures/x.png" />
+          </div>
           <div>
-            <div class="streamer-name" id="name">Caseoh_</div>
-            <div class="streamer-handle" id="handle">twitch.tv/Caseoh_</div>
+            <div class="streamer-name">Caseoh_</div>
+            <div class="streamer-handle">twitch.tv/Caseoh_</div>
           </div>
         </div>
         <div class="demo-divider"></div>
-        <p class="streamer-bio" id="bio">
-          The dude from TikTok — caseoh@mythictalent.com. Official waiting room channel "CASEOH247".
+        <p class="streamer-bio">
+          The dude from TikTok — caseoh@mythictalent.com. Official waiting room channel “CASEOH247”.
         </p>
         <div id="tags" style="margin-top:.5rem">
           <span class="tag">TikTok</span>
@@ -52,15 +109,17 @@
         </div>
       </aside>
 
-      <!-- Right: Tableau Embed -->
-      <section class="demo-card">
+      <!-- Right: Viz Card (same frame as before, no tip line) -->
+      <section class="demo-card viz-card">
         <h2>Caseoh_ Analytics</h2>
-        <div class="viz-frame" style="min-height:740px;">
-          <div class="viz-inner" style="padding-top:0; height:740px;">
-            <script type='module' src='https://10ay.online.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js'></script>
-            <tableau-viz id='tableau-viz' 
-                         src='https://10ay.online.tableau.com/t/kianasaki-302bd2f88e/views/Caseohdashboardfinal/Dashboard1' 
-                         width='100%' height='740' hide-tabs toolbar='bottom'>
+        <div class="viz-frame">
+          <div class="viz-abs">
+            <!-- Your embed fills the frame -->
+            <tableau-viz
+              id="tableau-viz"
+              src="https://10ay.online.tableau.com/t/kianasaki-302bd2f88e/views/Caseohdashboardfinal/Dashboard1"
+              hide-tabs
+              toolbar="bottom">
             </tableau-viz>
           </div>
         </div>
@@ -71,9 +130,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-content">
-      <div class="footer-bottom">
-        <p>&copy; 2025 Twitchlytics.</p>
-      </div>
+      <div class="footer-bottom"><p>&copy; 2025 Twitchlytics.</p></div>
     </div>
   </footer>
 
