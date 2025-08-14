@@ -55,6 +55,23 @@
     }
     .viz-card .viz-abs{ position:absolute; inset:0; }
     tableau-viz, .viz-card iframe{ width:100%; height:100%; border:0; display:block; }
+
+    /* Nav search (to the right of Demo) */
+    .nav-links { align-items:center; }
+    .nav-search-li { position:relative; margin-left:.25rem; }
+    .nav-search-form { display:flex; align-items:center; gap:.35rem; }
+    .nav-search-input{
+      width:200px; max-width:40vw; padding:.45rem .7rem;
+      border:1px solid var(--border-color);
+      background:rgba(0,255,255,.05);
+      color:var(--text-primary); font-size:.92rem; border-radius:6px; outline:none;
+    }
+    .nav-search-btn{
+      padding:.42rem .7rem; border:1px solid rgba(0,255,255,.35);
+      background:transparent; color:var(--primary-cyan); font-weight:700; cursor:pointer;
+      text-transform:uppercase; letter-spacing:.3px;
+    }
+    @media(max-width:900px){ .nav-search-li { display:none; } } /* hide on small screens */
   </style>
 
   <!-- Tableau Embedding API for <tableau-viz> -->
@@ -75,9 +92,17 @@
       <a href="index.html" class="logo">Twitchlytics</a>
       <ul class="nav-links">
         <li><a href="index.html#features">Product</a></li>
-        <li><a href="index.html#insights">Methodology</a></li>
+        <!-- CHANGED label: Methodology -> Insights -->
+        <li><a href="index.html#insights">Insights</a></li>
         <li><a href="index.html#tableau">Dashboard</a></li>
         <li><a href="demo.html">Demo</a></li>
+        <!-- Search that ONLY routes to Caseoh_ demo -->
+        <li class="nav-search-li">
+          <form class="nav-search-form" onsubmit="return demoSearch(event)">
+            <input id="demoSearchInput" class="nav-search-input" type="search" placeholder="Search username…" autocomplete="off" />
+            <button class="nav-search-btn" type="submit">Go</button>
+          </form>
+        </li>
       </ul>
       <div class="nav-bottom"><a href="index.html#contact" class="cyber-button">Create account</a></div>
       <button class="mobile-menu-button" id="mobileMenuBtn"><div class="hamburger"><span></span><span></span><span></span></div></button>
@@ -91,7 +116,6 @@
       <aside class="demo-card" id="streamerCard">
         <div class="streamer-header">
           <div class="streamer-avatar">
-            <!-- Using your uploaded image in repo root -->
             <img id="avatar" alt="Caseoh avatar" src="case.jpeg"/>
           </div>
           <div>
@@ -136,6 +160,21 @@
     </div>
   </footer>
 
+  <script>
+    // ONLY route to Caseoh_ demo. Accepts 'caseoh' or 'caseoh_'.
+    function demoSearch(e){
+      e.preventDefault();
+      const q = (document.getElementById('demoSearchInput').value || '').trim().toLowerCase();
+      if (q === 'caseoh' || q === 'caseoh_') {
+        // We're already on demo.html — reload to ensure correct view.
+        window.location.href = 'demo.html';
+      } else {
+        // Do nothing (or show a tiny hint)
+        alert('For this example search, type: caseoh');
+      }
+      return false;
+    }
+  </script>
   <script src="templatemo-nexus-scripts.js"></script>
 </body>
 </html>
